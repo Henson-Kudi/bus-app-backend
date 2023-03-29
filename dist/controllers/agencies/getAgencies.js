@@ -13,17 +13,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const postgres_1 = __importDefault(require("../../models/db/postgres"));
-function default_1(req, res) {
+function getAgencies(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        const agencyQs = `
+            SELECT
+                id,
+                name,
+                admin,
+                email,
+                city,
+                region,
+                country_name,
+                country_code,
+                country_image,
+                country_short,
+                contact,
+                contact_verified,
+                email_verified
+            FROM
+                agencies;
+        `;
         try {
-            const { rows } = yield postgres_1.default.query("create table if not exists users( name Varchar(20) not null, email varchar(20) unique not null)");
-            const { rows: insierts } = yield postgres_1.default.query("insert into users(name, email) values('Henson Kudi Amah', 'aamahkkudi@gmail.com')");
-            const { rows: selects } = yield postgres_1.default.query("select * from users");
-            res.send(selects);
+            const queryResponse = yield postgres_1.default.query(agencyQs);
+            const agencies = queryResponse.rows;
+            return res.status(200).json(agencies);
         }
         catch (err) {
             console.log(err);
+            return res.status(500).json({ message: "Internal; server error" });
         }
     });
 }
-exports.default = default_1;
+exports.default = getAgencies;

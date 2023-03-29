@@ -4,5 +4,5 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMyTickets = void 0;
-const getMyTickets_1 = __importDefault(require("./getMyTickets"));
+const getMyTickets_1 = __importDefault(require("../customers/getMyTickets"));
 exports.getMyTickets = getMyTickets_1.default;

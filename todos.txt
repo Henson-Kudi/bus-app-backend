@@ -1,0 +1,9 @@
+You have to include functionalities for sending emails when:
+
+    - A customer signup to either the app or as an agency. This would be an email to verify their email address and setup their account.
+
+    - A customer makes a booking from the app, send them an email containing acknowledgment of receipt of money and a copy of their ticket (order)
+
+You have to include functionalities for a user to add an agency to watch list. Each time the agency adds a travel item, a notification be sent to the user who has added this agency to watchlist. Users should be able to add and remove items from watchlist
+
+Booking a seat should be done through web sockets in order to avoid 2 customers booking thesame seat of thesame bus.

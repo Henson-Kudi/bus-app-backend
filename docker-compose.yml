@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+    nginx:
+        depends_on:
+            - app
+            - db
+        restart: always
+        build:
+            dockerfile: Dockerfile
+            context: ./nginx
+        ports:
+            - "80:80"
+    app:
+        build: .
+        container_name: bus_booking_app
+        hostname: bus_booking_app
+        ports:
+            - 4000:4000
+        env_file: .env
+        depends_on:
+            - db
+    db:
+        image: postgres:14.5
+        environment:
+            POSTGRES_USER: "bus_app_db"
+            POSTGRES_PASSWORD: 678560446-Hk
+        volumes:
+            - db-data:/var/lib/postgresql/data
+volumes:
+    db-data:

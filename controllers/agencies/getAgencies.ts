@@ -1,20 +1,37 @@
 import { Request, Response } from "express"
+import { QueryResult } from "pg"
 import pool from "../../models/db/postgres"
+import { AgencyData as Agency } from "../../types"
 
-export default async function (req: Request, res: Response) {
+export default async function getAgencies(req: Request, res: Response): Promise<Response> {
+    const agencyQs = `
+            SELECT
+                id,
+                name,
+                admin,
+                email,
+                city,
+                region,
+                country_name,
+                country_code,
+                country_image,
+                country_short,
+                contact,
+                contact_verified,
+                email_verified
+            FROM
+                agencies;
+        `
+
     try {
-        const { rows } = await pool.query(
-            "create table if not exists users( name Varchar(20) not null, email varchar(20) unique not null)"
-        )
+        const queryResponse: QueryResult = await pool.query(agencyQs)
 
-        const { rows: insierts } = await pool.query(
-            "insert into users(name, email) values('Henson Kudi Amah', 'aamahkkudi@gmail.com')"
-        )
+        const agencies = queryResponse.rows as Agency[]
 
-        const { rows: selects } = await pool.query("select * from users")
-
-        res.send(selects)
+        return res.status(200).json(agencies)
     } catch (err) {
         console.log(err)
+
+        return res.status(500).json({ message: "Internal; server error" })
     }
 }

@@ -18,17 +18,30 @@ const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY, {
     typescript: true,
 });
 const createPaymentIntent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = req.body;
     try {
+        if (!data || isNaN(+data.amount) || !data.amount) {
+            return res.status(500).json({ message: "Please provide an amount" });
+        }
+        const customer = yield stripe.customers.create();
+        const ephemeralKey = yield stripe.ephemeralKeys.create({ customer: customer.id }, { apiVersion: "2020-08-27" });
         const paymentIntent = yield stripe.paymentIntents.create({
-            amount: 1099,
-            currency: "usd",
-            payment_method_types: ["card"],
+            amount: +data.amount,
+            currency: "xaf",
+            customer: customer.id,
+            automatic_payment_methods: {
+                enabled: true,
+            },
         });
-        const clientSecret = paymentIntent.client_secret;
-        return res.status(200).json(clientSecret);
+        return res.status(200).json({
+            paymentIntent: paymentIntent.client_secret,
+            ephemeralKey: ephemeralKey.secret,
+            customer: customer.id,
+        });
     }
     catch (err) {
-        return res.status(500).json({ error: err.message });
+        console.log(err);
+        return res.status(500).json(Object.assign({ message: err.message }, err));
     }
 });
 exports.default = createPaymentIntent;

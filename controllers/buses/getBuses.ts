@@ -3,7 +3,7 @@ import { QueryResult } from "pg"
 import { busList as listBuses } from "../../demo-data"
 import pool from "../../models/db/postgres"
 
-import { Seats, Departure, Review, Driver, TravelItem } from "../../types"
+import { TravelItem } from "../../types"
 
 export default async function (req: Request, res: Response): Promise<Response> {
     const today = new Date()
@@ -17,114 +17,140 @@ export default async function (req: Request, res: Response): Promise<Response> {
         const dateToday = `${year}-${month}-${date}`
         const timeNow = `${hours}:${minutes}`
 
-        const departuresListQs = `
+        const travelBusQs = `
             SELECT
-                id,
-                depart_from AS from,
-                depart_to AS to,
-                date,
-                depart_time,
-                arrival_time,
-                seats_booked,
-                stops,
-                price,
-                duration,
-                arrival_date,
-                type,
-                travel_id
-            FROM travel_departures_and_returns
+                travel_list.id,
+                travel_list.title,
+                travel_list.description,
+                travel_list.type,
+                travel_list.coupon_name,
+                travel_list.coupon_rate,
+                travel_list.number,
+                travel_list.image,
+
+                jsonb_build_object(
+                    'id', drivers.id,
+                    'name', drivers.name,
+                    'contact', drivers.contact,
+                    'email', drivers.email,
+                    'position', drivers.position,
+                    'agency', drivers.agency,
+                    'rating', drivers.rating,
+                    'image', drivers.image
+                ) AS driver,
+
+                jsonb_build_object(
+                    'id', agencies.id,
+                    'name', agencies.name,
+                    'admin', agencies.admin,
+                    'email', agencies.email,
+                    'city', agencies.city,
+                    'region', agencies.region,
+                    'country_name', agencies.country_name,
+                    'country_code', agencies.country_code,
+                    'country_image', agencies.country_image,
+                    'country_short', agencies.country_short,
+                    'contact', agencies.contact,
+                    'contact_verified', agencies.contact_verified,
+                    'email_verified', agencies.email_verified
+                ) AS agency,
+               
+                jsonb_build_object(
+                    'id', travel_departures_and_returns.id,
+                    'from', travel_departures_and_returns.depart_from,
+                    'to', travel_departures_and_returns.depart_to,
+                    'date', travel_departures_and_returns.date,
+                    'depart_time', travel_departures_and_returns.depart_time,
+                    'arrival_time', travel_departures_and_returns.arrival_time,
+                    'seats_booked', travel_departures_and_returns.seats_booked,
+                    'stops', travel_departures_and_returns.stops,
+                    'price', travel_departures_and_returns.price,
+                    'duration', travel_departures_and_returns.duration,
+                    'arrival_date', travel_departures_and_returns.arrival_date,
+                    'type', travel_departures_and_returns.type,
+                    'travel_id', travel_departures_and_returns.travel_id
+                ) as departure,
+
+                jsonb_agg(
+                    jsonb_build_object(
+                        'id', travel_seats.id,
+                        'number', travel_seats.number,
+                        'position', travel_seats.position,
+                        'travel_id', travel_seats.travel_id,
+                        'booked', travel_seats.booked
+                    )
+                ) AS seats
+
+            FROM travel_list
+
+            INNER JOIN travel_seats ON travel_seats.travel_id = travel_list.id
+
+            INNER JOIN travel_departures_and_returns
+                ON travel_list.id = travel_departures_and_returns.travel_id
+            
+            INNER JOIN agencies
+                ON agencies.id = travel_list.agency
+            
+            INNER JOIN drivers
+                ON drivers.id = travel_list.driver
+
             WHERE
-                date >= $1
-            AND
-                depart_time >= $2
+                travel_departures_and_returns.date >= $1
+
+            GROUP BY
+                travel_list.id,
+                travel_list.driver,
+                travel_list.title,
+                travel_list.description,
+                travel_list.type,
+                travel_list.coupon_name,
+                travel_list.coupon_rate,
+                travel_list.number,
+                travel_list.image,
+                travel_list.agency,
+                travel_departures_and_returns.id,
+                travel_departures_and_returns.depart_from,
+                travel_departures_and_returns.depart_to,
+                travel_departures_and_returns.date,
+                travel_departures_and_returns.depart_time,
+                travel_departures_and_returns.arrival_time,
+                travel_departures_and_returns.seats_booked,
+                travel_departures_and_returns.stops,
+                travel_departures_and_returns.price,
+                travel_departures_and_returns.duration,
+                travel_departures_and_returns.arrival_date,
+                travel_departures_and_returns.travel_id,
+                drivers.id,
+                drivers.name,
+                drivers.contact,
+                drivers.email,
+                drivers.position,
+                drivers.agency,
+                drivers.rating,
+                drivers.image,
+                agencies.id,
+                agencies.name,
+                agencies.admin,
+                agencies.email,
+                agencies.city,
+                agencies.region,
+                agencies.country_name,
+                agencies.country_code,
+                agencies.country_image,
+                agencies.country_short,
+                agencies.contact,
+                agencies.contact_verified,
+                agencies.email_verified;
         `
 
-        const seatsQs = `
-            SELECT
-                id,
-                number,
-                position,
-                travel_id,
-                booked
-            FROM
-                travel_seats
-            WHERE
-                travel_id = $1 `
+        const travelBusRes: QueryResult = await pool.query(travelBusQs, [dateToday])
 
-        const busListQs = `
-            SELECT
-                id,
-                driver,
-                title,
-                description,
-                type,
-                coupon_name,
-                coupon_rate,
-                number,
-                image,
-                agency
-            
-            FROM
-                travel_list
-            WHERE id = $1`
+        const travelBusRows = travelBusRes.rows as TravelItem[]
 
-        const driverQs = `SELECT * FROM drivers WHERE id = $1`
-        const agencyQs = `SELECT id, name AS agency FROM agencies WHERE id = $1`
-
-        // const driverReviewsQs = `SELECT * FROM driver_reviews WHERE driver_id = $1`
-        console.log("hiit")
-
-        const departureRes: QueryResult = await pool.query(departuresListQs, [dateToday, timeNow])
-
-        const departureRows = departureRes.rows as Departure[]
-
-        const list = departureRows?.map(async (departure) => {
-            const busRes: QueryResult = await pool.query(busListQs, [departure.travel_id])
-            const [bus] = busRes.rows
-
-            const seatsRes: QueryResult = await pool.query(seatsQs, [bus.id])
-            const seats = seatsRes.rows as Seats[]
-
-            const rowsRes: QueryResult = await pool.query(driverQs, [bus.driver])
-
-            const [driver] = rowsRes.rows as Driver[]
-
-            const agencyRes: QueryResult = await pool.query(agencyQs, [bus.agency])
-
-            const [agency] = agencyRes.rows
-
-            // const { rows: driverReviews } = await pool.query(driverReviewsQs, [driver?.id])
-
-            const travelItem: TravelItem = {
-                ...bus,
-                ...agency,
-                driver: { ...driver, reviews: [] }, //remember to change the value of reviews
-                seats,
-                departure: {
-                    from: departure?.from,
-                    to: departure?.to,
-                    date: departure?.date,
-                    depart_time: departure?.depart_time,
-                    arrival_time: departure?.arrival_time,
-                    seats_booked: departure?.seats_booked,
-                    stops: departure?.stops,
-                    price: departure?.price,
-                    duration: departure?.duration,
-                    arrival_date: departure?.arrival_date,
-                    type: departure?.type,
-                    travel_id: departure?.travel_id,
-                },
-            }
-
-            return travelItem
-        })
-
-        const busList: TravelItem[] = await Promise.all(list)
-
-        // handle database query
-
-        return res.status(200).json([...busList, ...listBuses])
+        return res.status(200).json(travelBusRows)
     } catch (err) {
+        console.log(err)
+
         return res.status(500).json({ message: "Server error" })
     }
 }
