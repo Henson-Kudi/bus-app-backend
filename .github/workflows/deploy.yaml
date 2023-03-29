@@ -13,5 +13,5 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_default_region: us-east-2
-          dot_env: ${{ secrets.DOT_ENV }}
-          ghv_env: ${{vars.VARS}}
+          # dot_env: ${{ secrets.DOT_ENV }}
+          # ghv_env: ${{vars.VARS}}
