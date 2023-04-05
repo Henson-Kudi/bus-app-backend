@@ -59,3 +59,4 @@ server.listen(PORT, () => {
     console.log(`App listening on port:${PORT}`);
     postgres_1.db.runMigrations();
 });
+console.log(new Buffer("79039a6f-d667-4a12-bc9f-10142dab643d:bc2acfd62a36493bb044ecaf8bc3c4de").toString("base64"));

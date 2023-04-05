@@ -23,7 +23,7 @@ const poolConfig = {
     user: DB_USER,
     password: DB_PASS,
     host: DB_HOST,
-    port: Number(DB_PORT),
+    // port: Number(DB_PORT),
     max: Number(DB_POOL_SIZE),
     idleTimeOutMillis: Number(DB_POOL_CLIENT_IDLE_TIMEOUT),
     connectionTimeoutMillis: Number(DB_POOL_CLIENT_CONNECTION_TIMEOUT),

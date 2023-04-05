@@ -3,6 +3,7 @@ import requestToPay from "../../controllers/mobileMoney/mtn/requestToPay"
 import requestToPayStatus from "../../controllers/mobileMoney/mtn/requestToPayStatus"
 import requestToRefundStatus from "../../controllers/mobileMoney/mtn/requestToRefundStatus"
 import requestToTransfer from "../../controllers/mobileMoney/mtn/requestTotransfer"
+import createMtnuser from "../../controllers/mobileMoney/mtn/user/createMtnUser"
 
 const Router = express.Router()
 
@@ -62,5 +63,9 @@ Router.route("/refund-callback").post(async (req: Request, res: Response) => {
 
     res.send("Ok, test refund working")
 })
+
+
+// DEVELOPMENT-ONLY ROUTES
+Router.route('/sandbox-user').post(createMtnuser)
 
 export default Router

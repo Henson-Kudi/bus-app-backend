@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express"
+import cors from "cors"
 import { ServerToClientEvents, ClientToServerEvents, InterServerEvents, SocketData } from "./types"
 import http from "http"
 import { Server } from "socket.io"
@@ -15,6 +16,12 @@ import auth from "./routes/authentication"
 import { db } from "./models/db/postgres"
 
 const app = express()
+
+app.use(
+    cors({
+        origin: "*",
+    })
+)
 
 const server = http.createServer(app)
 
@@ -72,3 +79,9 @@ server.listen(PORT, () => {
     console.log(`App listening on port:${PORT}`)
     db.runMigrations()
 })
+
+console.log(
+    new Buffer("79039a6f-d667-4a12-bc9f-10142dab643d:bc2acfd62a36493bb044ecaf8bc3c4de").toString(
+        "base64"
+    )
+)

@@ -18,7 +18,7 @@ export default async function requestToPaymtn(
                 "X-Reference-Id": referenceId,
                 "X-Target-Environment": targetEnvironment,
                 "Ocp-Apim-Subscription-Key": subscriptionKey,
-                // "X-Callback-Url": `${callbackHost}/payments/mtn/collection-callback`,
+                "X-Callback-Url": `http://${callbackHost}/payments/mtn/collection-callback`,
             },
         })
 
