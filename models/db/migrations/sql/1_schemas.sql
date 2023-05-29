@@ -42,7 +42,8 @@ CREATE TABLE customers(
     image TEXT,
     contact_verified BOOLEAN NOT NULL DEFAULT false,
     email_verified BOOLEAN NOT NULL DEFAULT false,
-    notification_token VARCHAR(100)
+    notification_token VARCHAR(100),
+    verification_code INT NOT NULL
 );
 
 -- agency drivers
@@ -66,6 +67,8 @@ CREATE TABLE buses(
     number VARCHAR(20) NOT NULL UNIQUE,
     agency uuid NOT NULL,
     image TEXT,
+    seats_chart TEXT,
+    description TEXT,
     driver uuid NOT NULL,
     number_of_seats INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT fk_agencies
@@ -133,6 +136,7 @@ CREATE TABLE travel_list( -- this takes both offers and normal traveks. We'll us
     coupon_rate INTEGER NOT NULL DEFAULT 0,
     number VARCHAR(100) NOT NULL,
     image TEXT,
+    seats_chart TEXT,
     agency uuid NOT NULL,
     CONSTRAINT fk_agencies
         FOREIGN KEY(agency)
@@ -212,6 +216,16 @@ CREATE TABLE used_coupons(
     CONSTRAINT fk_travel_list
         FOREIGN KEY(travel_id)
         REFERENCES travel_list(id)
+);
+
+CREATE TABLE refresh_tokens(
+    id SERIAL,
+    agency uuid NOT NULL,
+    token TEXT NOT NULL UNIQUE,
+    browser_id TEXT,
+    CONSTRAINT fk_agencies
+        FOREIGN KEY(agency)
+        REFERENCES agencies(id)
 );
 
 

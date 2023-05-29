@@ -1,13 +1,13 @@
 import { Request, Response } from "express"
 import { QueryResult } from "pg"
 import pool from "../../../models/db/postgres"
-import { DriverReview } from "../../../types"
+import { DriverReview, RequestInterface } from "../../../types"
 
 export default async function getAllAgencyDriversReviews(
-    req: Request,
+    req: RequestInterface,
     res: Response
 ): Promise<Response> {
-    const agencyId: string | undefined = req.params.id
+    const agencyId: string | undefined = req.user.id
 
     const qs = `
         SELECT

@@ -13,6 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const http_1 = __importDefault(require("http"));
 const socket_io_1 = require("socket.io");
 const routes_1 = __importDefault(require("./routes"));
@@ -26,13 +28,28 @@ const coupons_1 = __importDefault(require("./routes/coupons"));
 const customers_1 = __importDefault(require("./routes/customers"));
 const authentication_1 = __importDefault(require("./routes/authentication"));
 const postgres_1 = require("./models/db/postgres");
+const credentials_1 = __importDefault(require("./controllers/credentials"));
 const app = (0, express_1.default)();
+app.use(credentials_1.default);
+app.use((0, cors_1.default)({
+    origin: (origin, cb) => {
+        cb(null, origin);
+    },
+}));
 const server = http_1.default.createServer(app);
-const io = new socket_io_1.Server(server, { cors: { origin: "*" } });
+const io = new socket_io_1.Server(server, {
+    cors: {
+        origin: (origin, cb) => {
+            cb(null, origin);
+        },
+    },
+});
 const PORT = process.env.PORT || 5000;
 app.set("io", io);
 app.use(express_1.default.json());
+app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.urlencoded({ extended: true }));
+// app.use(expressFileUpload({}))
 app.use("/api/bus-list", buses_1.default);
 app.use("/api/bus-offers", offers_1.default);
 app.use("/api/agencies", agencies_1.default);
@@ -47,7 +64,6 @@ app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("Hello");
 }));
 io.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("a user connected", socket.id);
     const userId = socket.handshake.query.id;
     if (!userId) {
         return;
@@ -59,4 +75,8 @@ server.listen(PORT, () => {
     console.log(`App listening on port:${PORT}`);
     postgres_1.db.runMigrations();
 });
-console.log(new Buffer("79039a6f-d667-4a12-bc9f-10142dab643d:bc2acfd62a36493bb044ecaf8bc3c4de").toString("base64"));
+// console.log(
+//     new Buffer("79039a6f-d667-4a12-bc9f-10142dab643d:bc2acfd62a36493bb044ecaf8bc3c4de").toString(
+//         "base64"
+//     )
+// )

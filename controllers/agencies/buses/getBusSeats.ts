@@ -2,10 +2,10 @@ import { Request, Response } from "express"
 import { QueryResult } from "pg"
 import { uuidv4Regex } from "../../../configs"
 import pool from "../../../models/db/postgres"
-import { BusSeats } from "../../../types"
+import { BusSeats, RequestInterface } from "../../../types"
 
-export default async function getAgencyBusSeats(req: Request, res: Response): Promise<Response> {
-    const agencyId: string | undefined = req.params.id
+export default async function getAgencyBusSeats(req: RequestInterface, res: Response): Promise<Response> {
+    const agencyId: string | undefined = req.user.id
     const busId: string | undefined = req.params.busId
 
     if (!agencyId || !uuidv4Regex.test(agencyId) || !busId || !uuidv4Regex.test(busId)) {

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateAgencyReview = exports.deleteAgencyReview = exports.createAgencyReview = exports.getAgencyReviews = exports.updateDriverReview = exports.deleteDriverReview = exports.getDriverReviews = exports.getAllAgencyDriversReviews = exports.createDriverReview = exports.updateBusSeat = exports.updateBusDetails = exports.getAgencyBusSeats = exports.deleteBus = exports.getAgencyBuses = exports.createBus = exports.updateDriverInfo = exports.getDrivers = exports.getDriver = exports.createAgencyDriver = exports.deleteDriver = exports.getAgency = exports.getAgencies = exports.createAgency = void 0;
+exports.getAgencyScheduledBuses = exports.updateAgencyReview = exports.deleteAgencyReview = exports.createAgencyReview = exports.getAgencyReviews = exports.updateDriverReview = exports.deleteDriverReview = exports.getDriverReviews = exports.getAllAgencyDriversReviews = exports.createDriverReview = exports.updateBusSeat = exports.updateBusDetails = exports.getAgencyBusSeats = exports.deleteBus = exports.getAgencyBuses = exports.createBus = exports.updateDriverInfo = exports.getDrivers = exports.getDriver = exports.createAgencyDriver = exports.deleteDriver = exports.getAgency = exports.getAgencies = exports.createAgency = void 0;
 const getAgencies_1 = __importDefault(require("./getAgencies"));
 exports.getAgencies = getAgencies_1.default;
 const getAgencyReviews_1 = __importDefault(require("./getAgencyReviews"));
@@ -36,3 +36,4 @@ Object.defineProperty(exports, "deleteBus", { enumerable: true, get: function ()
 Object.defineProperty(exports, "getAgencyBusSeats", { enumerable: true, get: function () { return buses_1.getAgencyBusSeats; } });
 Object.defineProperty(exports, "updateBusDetails", { enumerable: true, get: function () { return buses_1.updateBusDetails; } });
 Object.defineProperty(exports, "updateBusSeat", { enumerable: true, get: function () { return buses_1.updateBusSeat; } });
+Object.defineProperty(exports, "getAgencyScheduledBuses", { enumerable: true, get: function () { return buses_1.getAgencyScheduledBuses; } });

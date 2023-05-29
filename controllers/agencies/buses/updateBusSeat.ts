@@ -1,12 +1,12 @@
 import { Request, Response } from "express"
 import { QueryResult } from "pg"
 import { uuidv4Regex } from "../../../configs"
-import { BusSeats } from "../../../types"
+import { BusSeats, RequestInterface } from "../../../types"
 import pool from "../../../models/db/postgres"
 
-export default async function updateBusSeat(req: Request, res: Response): Promise<Response> {
+export default async function updateBusSeat(req: RequestInterface, res: Response): Promise<Response> {
     const busId: string | undefined = req.params.busId
-    const agencyId: string | undefined = req.params.id
+    const agencyId: string | undefined = req.user.id
     const data: BusSeats = req.body
 
     if (!agencyId || !uuidv4Regex.test(agencyId) || !busId || !uuidv4Regex.test(busId)) {

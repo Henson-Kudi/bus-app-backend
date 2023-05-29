@@ -1,3 +1,4 @@
+import { Request } from "express"
 import { string } from "pg-format"
 
 export interface Seats {
@@ -21,6 +22,7 @@ export interface Bus {
     number_of_seats?: string
     seats: Seats[] | string
     id: string
+    seats_chart?: string
 }
 
 export interface Departure {
@@ -176,6 +178,7 @@ export interface AgencyData {
     contact_verified: boolean
     email_verified: boolean
     password_hash: string
+    refresh_token?: string
 }
 
 export interface RegisterAgency {
@@ -308,4 +311,15 @@ export interface InterServerEvents {
 export interface SocketData {
     name: string
     age: number
+}
+
+export interface RefreshToken {
+    id: string
+    agency: string
+    token: string
+    browser_id?: string
+}
+
+export interface RequestInterface extends Request {
+    user?: { id: string } | undefined | any
 }

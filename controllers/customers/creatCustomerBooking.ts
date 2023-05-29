@@ -92,6 +92,8 @@ export default async function creatCustomerBooking(req: Request, res: Response):
 
         const [token]: { notification_token: string }[] = tokenRes.rows
 
+        console.log(token)
+
         if (data?.customer?.contact) {
             await Promise.all(
                 bookings?.map(async (item) => {
@@ -107,7 +109,7 @@ export default async function creatCustomerBooking(req: Request, res: Response):
             )
         }
 
-        if (token.notification_token) {
+        if (token?.notification_token) {
             // schedule jobs
             const _24hrsToNotify = nodeSchedule.scheduleJob(_24hrsBefore, async () => {
                 await sendNotificationToMany({

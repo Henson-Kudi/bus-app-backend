@@ -1,14 +1,15 @@
 import { Request, Response } from "express"
 import { QueryResult } from "pg"
-import { DriverDetails } from "../../../types"
+import { DriverDetails, RequestInterface } from "../../../types"
 import pool from "../../../models/db/postgres"
 import { uuidv4Regex } from "../../../configs"
 
-export default async function createAgencyDriver(req: Request, res: Response): Promise<Response> {
+export default async function createAgencyDriver(
+    req: RequestInterface,
+    res: Response
+): Promise<Response> {
     const data: DriverDetails | undefined = req.body
-    const agencyId: string | undefined = req.params.id
-
-    console.log(data)
+    const agencyId: string | undefined = req.user.id
 
     if (
         !data ||
@@ -17,7 +18,7 @@ export default async function createAgencyDriver(req: Request, res: Response): P
         !data.contact ||
         !data.email
     ) {
-        return res.status(500).json({ message: "Invalid data sent. All fields required" })
+        return res.status(400).json({ message: "Invalid data sent. All fields required" })
     }
 
     const driverQs = `

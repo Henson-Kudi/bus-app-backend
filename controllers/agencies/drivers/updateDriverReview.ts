@@ -1,10 +1,10 @@
 import { Request, Response } from "express"
 import { uuidv4Regex } from "../../../configs"
-import { DriverReview } from "../../../types"
+import { DriverReview, RequestInterface } from "../../../types"
 import pool from "../../../models/db/postgres"
 
-export default async function updateDriverReview(req: Request, res: Response): Promise<Response> {
-    const userId: string | undefined | string[] = req.headers.user
+export default async function updateDriverReview(req: RequestInterface, res: Response): Promise<Response> {
+    const userId: string | undefined | string[] = req.user.id
     const reviewId: string | undefined = req.params.reviewId
 
     const data: { message: string; stars: string; driverId: string } | undefined = req.body

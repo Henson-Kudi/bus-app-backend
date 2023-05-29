@@ -25,6 +25,7 @@ import {
     getAgencyBusSeats,
     updateBusDetails,
     updateBusSeat,
+    getAgencyScheduledBuses,
 } from "./buses"
 
 export {
@@ -51,4 +52,5 @@ export {
     createAgencyReview,
     deleteAgencyReview,
     updateAgencyReview,
+    getAgencyScheduledBuses,
 }

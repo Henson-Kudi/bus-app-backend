@@ -32,6 +32,7 @@ export const db = {
         const client = await pool.connect()
         try {
             await migrate({ client }, path.resolve(__dirname, "migrations/sql"))
+
             console.log("Database connected")
         } catch (err: any) {
             console.log(err)

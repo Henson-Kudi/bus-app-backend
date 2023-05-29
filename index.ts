@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express"
+import expressFileUpload from "express-fileupload"
 import cors from "cors"
+import cookierParser from "cookie-parser"
 import { ServerToClientEvents, ClientToServerEvents, InterServerEvents, SocketData } from "./types"
 import http from "http"
 import { Server } from "socket.io"
@@ -14,12 +16,17 @@ import coupons from "./routes/coupons"
 import customers from "./routes/customers"
 import auth from "./routes/authentication"
 import { db } from "./models/db/postgres"
+import credentials from "./controllers/credentials"
 
 const app = express()
 
+app.use(credentials)
+
 app.use(
     cors({
-        origin: "*",
+        origin: (origin, cb) => {
+            cb(null, origin)
+        },
     })
 )
 
@@ -27,7 +34,13 @@ const server = http.createServer(app)
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(
     server,
-    { cors: { origin: "*" } }
+    {
+        cors: {
+            origin: (origin, cb) => {
+                cb(null, origin)
+            },
+        },
+    }
 )
 
 const PORT = process.env.PORT || 5000
@@ -36,7 +49,11 @@ app.set("io", io)
 
 app.use(express.json())
 
+app.use(cookierParser())
+
 app.use(express.urlencoded({ extended: true }))
+
+// app.use(expressFileUpload({}))
 
 app.use("/api/bus-list", buses)
 
@@ -62,8 +79,6 @@ app.get("/", async (req: Request, res: Response) => {
 })
 
 io.on("connection", async (socket) => {
-    console.log("a user connected", socket.id)
-
     const userId = socket.handshake.query.id
 
     if (!userId) {
@@ -80,8 +95,8 @@ server.listen(PORT, () => {
     db.runMigrations()
 })
 
-console.log(
-    new Buffer("79039a6f-d667-4a12-bc9f-10142dab643d:bc2acfd62a36493bb044ecaf8bc3c4de").toString(
-        "base64"
-    )
-)
+// console.log(
+//     new Buffer("79039a6f-d667-4a12-bc9f-10142dab643d:bc2acfd62a36493bb044ecaf8bc3c4de").toString(
+//         "base64"
+//     )
+// )

@@ -1,11 +1,11 @@
 import { Request, Response } from "express"
 import { QueryResult } from "pg"
 import { uuidv4Regex } from "../../../configs"
-import { DriverDetails, Review } from "../../../types"
+import { DriverDetails, RequestInterface, Review } from "../../../types"
 import pool from "../../../models/db/postgres"
 
-export default async function getDriver(req: Request, res: Response): Promise<Response> {
-    const agencyId: undefined | string = req.params.id
+export default async function getDriver(req: RequestInterface, res: Response): Promise<Response> {
+    const agencyId: undefined | string = req.user.id
     const driverId: undefined | string = req.params.driverId
 
     if (!agencyId || !uuidv4Regex.test(agencyId) || !driverId || !uuidv4Regex.test(driverId)) {

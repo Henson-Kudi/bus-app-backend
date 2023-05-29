@@ -1,12 +1,12 @@
 import { Request, Response } from "express"
 import { QueryResult } from "pg"
-import { DriverDetails } from "../../../types"
+import { DriverDetails, RequestInterface } from "../../../types"
 import pool from "../../../models/db/postgres"
 import { uuidv4Regex } from "../../../configs"
 
-export default async function updateDriverInfo(req: Request, res: Response): Promise<Response> {
+export default async function updateDriverInfo(req: RequestInterface, res: Response): Promise<Response> {
     const data: DriverDetails | undefined = req.body
-    const agencyId: string | undefined = req.params.id
+    const agencyId: string | undefined = req.user.id
 
     if (!data || !data.id || !agencyId || !uuidv4Regex.test(agencyId)) {
         return res.status(500).json({ message: "please submit valid data" })

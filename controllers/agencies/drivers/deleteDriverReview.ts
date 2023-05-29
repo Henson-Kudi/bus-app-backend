@@ -1,10 +1,10 @@
 import { Request, Response } from "express"
 import { QueryResult } from "pg"
 import { uuidv4Regex } from "../../../configs"
-import { DriverReview } from "../../../types"
+import { DriverReview, RequestInterface } from "../../../types"
 import pool from "../../../models/db/postgres"
 
-export default async function deleteDriverReview(req: Request, res: Response): Promise<Response> {
+export default async function deleteDriverReview(req: RequestInterface, res: Response): Promise<Response> {
     const driverId: string | undefined = req.params.driverId
     const reviewId: string | undefined = req.params.reviewId
 
